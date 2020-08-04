@@ -68,4 +68,9 @@ services:
 ```
 docker restart ui
 ```
+3.若出现无法连接其他如UI容器无法连接oap:12800，尝试使用ip替换容器名称/或者使用network
+```
+environment:
+      SW_OAP_ADDRESS: 【ip】:12800
+```
 https://github.com/apache/skywalking

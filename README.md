@@ -1,0 +1,58 @@
+# aspnetcore_skywalking_docker-compose
+Aspnet Core skywalking_skywalking_docker-compose
+# docker 方式部署 aspnetcore 下的skywalking apm 监控
+elasticsearch:7.6.2
+skywalking-oap-server:7.0.0-es7
+apache/skywalking-ui:7.0.0
+
+```
+version: '3.3'
+services:
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.6.2
+    container_name: elasticsearch
+    restart: always
+    ports:
+      - 9200:9200
+    environment:
+      - discovery.type=single-node
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - TZ=Asia/Shanghai
+      
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+  oap:
+    image: apache/skywalking-oap-server:7.0.0-es7
+    container_name: oap
+    depends_on:
+      - elasticsearch
+    links:
+      - elasticsearch
+    restart: always
+    ports:
+      - 11800:11800
+      - 12800:12800
+    environment:
+      SW_STORAGE: elasticsearch7
+      SW_STORAGE_ES_CLUSTER_NODES: elasticsearch:9200
+      TZ: Asia/Shanghai
+  ui:
+    image: apache/skywalking-ui:7.0.0
+    container_name: ui
+    depends_on:
+      - oap
+    links:
+      - oap
+    restart: always
+    ports:
+      - 8080:8080
+    environment:
+      SW_OAP_ADDRESS: oap:12800
+      TZ: Asia/Shanghai
+```
+#常见问题
+数据无法正常展示：注意保证修改docker下的时区，使其保持一致
+https://github.com/apache/skywalking

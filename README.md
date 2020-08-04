@@ -1,10 +1,15 @@
 # aspnetcore_skywalking_docker-compose
 Aspnet Core skywalking_skywalking_docker-compose
-# docker 方式部署 aspnetcore 下的skywalking apm 监控
-elasticsearch:7.6.2
-skywalking-oap-server:7.0.0-es7
-apache/skywalking-ui:7.0.0
+# docker 方式部署 aspnetcore 下的skywalking apm 7.0监控
+因之前6.0版本可能出现运行一段时间可能出现数据出现rpc 连接出错，
+  因此使用新版本skywalking7.0+es7.0版本实现
 
+
+- elasticsearch:7.6.2
+- skywalking-oap-server:7.0.0-es7
+- apache/skywalking-ui:7.0.0
+
+docker-compose.yml 
 ```
 version: '3.3'
 services:
@@ -54,5 +59,13 @@ services:
       TZ: Asia/Shanghai
 ```
 #常见问题
-数据无法正常展示：注意保证修改docker下的时区，使其保持一致
+1.数据无法正常展示：注意保证修改docker下的时区，使其保持一致
+```
+    environment:
+       TZ: Asia/Shanghai
+```
+2.查看对应的docker 日志可能需要重启下 ui 容器
+```
+docker restart ui
+```
 https://github.com/apache/skywalking
